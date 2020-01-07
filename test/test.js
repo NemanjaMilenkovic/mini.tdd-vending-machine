@@ -28,4 +28,12 @@ describe("vending machine", () => {
     machine.pressButton(2);
     expect(machine.selectedColumn).to.equal(2);
   });
+  it("should decrese item inventory by 1", () => {
+    const machine = new VendingMachine();
+    const lastCount = machine.inventory[0][0].count;
+    machine.insertCoin(500);
+    machine.pressButton("A");
+    machine.pressButton(1);
+    expect(machine.inventory[0][0].count).to.equal(lastCount - 1);
+  });
 });

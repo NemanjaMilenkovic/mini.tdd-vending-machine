@@ -32,12 +32,23 @@ class VendingMachine {
   pressButton(entry) {
     if (entry === "A" || entry === "B" || entry === "C" || entry === "D") {
       this.selectedRow = entry;
-      console.log(entry);
+      console.log(this.selectedRow);
     }
     if (entry === 1 || entry === 2 || entry === 3 || entry === 4) {
       this.selectedColumn = entry;
-      console.log(entry);
+      console.log(this.selectedRow, this.selectedColumn);
     }
+    if (this.selectedRow !== "" && this.selectedColumn !== 0) {
+      this.changeInventoryCount();
+    }
+  }
+
+  changeInventoryCount() {
+    const convertRow = ["A", "B", "C", "D"];
+    let index = convertRow.findIndex((row) => {
+      return row === this.selectedRow;
+    });
+    this.inventory[index][this.selectedColumn - 1].count--;
   }
 }
 
