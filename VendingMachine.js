@@ -10,15 +10,32 @@ class VendingMachine {
     };
     this.selectedRow = "";
     this.selectedColumn = 0;
-    this.juice = { name: `Apple Juice`, price: 350, count: 5 };
-    this.coffee = { name: "Tully's", price: 250, count: 7 };
-    this.tea = { name: `Good Tea`, price: 450, count: 1 };
-    this.beer = { name: "Sapporo", price: 350, count: 0 };
+
     this.inventory = [
-      [this.juice, this.coffee, this.tea, this.beer],
-      [this.m7, this.m6, this.m5, this.m4],
-      [this.a7, this.a6, this.a5, this.a4],
-      [this.t7, this.t6, this.t5, this.t4],
+      [
+        { type: "Juice", name: "Apple Juice", price: 350, count: 3 },
+        { type: "Juice", name: "Orange Juice", price: 350, count: 3 },
+        { type: "Juice", name: "Peach Juice", price: 350, count: 0 },
+        { type: "Juice", name: "Mango Juice", price: 450, count: 15 },
+      ],
+      [
+        { type: "Coffee", name: "Espresso", price: 150, count: 15 },
+        { type: "Coffee", name: "Cappuccino", price: 250, count: 1 },
+        { type: "Coffee", name: "Corretto", price: 250, count: 2 },
+        { type: "Coffee", name: "Macchiato", price: 250, count: 22 },
+      ],
+      [
+        { type: "Tea", name: "Sencha", price: 250, count: 11 },
+        { type: "Tea", name: "Matcha", price: 250, count: 2 },
+        { type: "Tea", name: "Mint", price: 250, count: 12 },
+        { type: "Tea", name: "Chamomile", price: 250, count: 10 },
+      ],
+      [
+        { type: "Beer", name: "Kabinet", price: 350, count: 15 },
+        { type: "Beer", name: "Sapporo", price: 350, count: 5 },
+        { type: "Beer", name: "Kozel", price: 450, count: 4 },
+        { type: "Beer", name: "Krusovice", price: 450, count: 2 },
+      ],
     ];
   }
 
@@ -30,16 +47,45 @@ class VendingMachine {
   }
 
   pressButton(entry) {
+    if (typeof entry == "string") {
+      entry = entry.toUpperCase();
+    }
+
     if (entry === "A" || entry === "B" || entry === "C" || entry === "D") {
       this.selectedRow = entry;
-      console.log(this.selectedRow);
-    }
-    if (entry === 1 || entry === 2 || entry === 3 || entry === 4) {
+      console.log("Row: " + this.selectedRow);
+    } else if (typeof entry === "string") {
+      console.log("Please choose: 'A', 'B', 'C' or 'D'");
+      return;
+    } else if (entry === 1 || entry === 2 || entry === 3 || entry === 4) {
       this.selectedColumn = entry;
-      console.log(this.selectedRow, this.selectedColumn);
+      console.log("Column: " + this.selectedColumn);
+    } else {
+      console.log("Please chose: '1', '2', '3' or '4'");
+      return;
     }
+
+    const convertRow = ["A", "B", "C", "D"];
+    let index = convertRow.findIndex((row) => {
+      return row === this.selectedRow;
+    });
+
     if (this.selectedRow !== "" && this.selectedColumn !== 0) {
+      if (this.inventory[index][this.selectedColumn - 1].count < 1) {
+        console.log("Item is not available");
+        return false;
+      }
+
+      if (this.balance < this.inventory[index][this.selectedColumn - 1].price) {
+        console.log("Insufficient amount");
+        return false;
+      }
       this.changeInventoryCount();
+      console.log(
+        "You've selected: " +
+          this.inventory[index][this.selectedColumn - 1].name
+      );
+      return this.inventory[index][this.selectedColumn - 1];
     }
   }
 
@@ -49,6 +95,12 @@ class VendingMachine {
       return row === this.selectedRow;
     });
     this.inventory[index][this.selectedColumn - 1].count--;
+  }
+  returnChange(item) {
+    let change = this.balance - item.price;
+    console.log("Your change is: " + change);
+    this.balance = 0;
+    return change;
   }
 }
 
